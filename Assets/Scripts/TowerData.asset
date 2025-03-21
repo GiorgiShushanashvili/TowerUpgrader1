@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ede372263a8d432dbe9a979b7d60be3b, type: 3}
+  m_Name: TowerData
+  m_EditorClassIdentifier: 
+  panels:
+  - actualValue: 0
+    nextValue: 0
+    silverCost: 0
+    goldCost: 0
+    currentLevel: 0
+    costLevel: 0
+    permanentLevel: 0
+    evolveData:
+      _evolveObjects: []
+      _evolveLevel: 0
+      _evolvePrice: 0
+      evolveCounter: 0
