@@ -13,15 +13,48 @@ MonoBehaviour:
   m_Name: TowerData
   m_EditorClassIdentifier: 
   panels:
-  - actualValue: 0
-    nextValue: 0
+  - actualValue: 95
+    nextValue: 100
     silverCost: 0
-    goldCost: 0
+    goldCost: 44
     currentLevel: 0
     costLevel: 0
-    permanentLevel: 0
+    permanentLevel: 5
     evolveData:
-      _evolveObjects: []
-      _evolveLevel: 0
+      _evolveObjects:
+      - {fileID: 6869433153810825335, guid: 4bd04e60452b5b74ca409c8633d0ba53, type: 3}
+      - {fileID: 5569992274756208873, guid: c56fc6ba80b7b124bb5c33bf4e45bf7f, type: 3}
+      - {fileID: 342527905328592179, guid: a33cb5a9354a05e4db5977f915c32c3d, type: 3}
+      _evolveLevel: 1
+      _evolvePrice: 0
+      evolveCounter: 0
+  - actualValue: 67
+    nextValue: 72
+    silverCost: 0
+    goldCost: 17
+    currentLevel: 0
+    costLevel: 0
+    permanentLevel: 5
+    evolveData:
+      _evolveObjects:
+      - {fileID: 6869433153810825335, guid: 4bd04e60452b5b74ca409c8633d0ba53, type: 3}
+      - {fileID: 5569992274756208873, guid: c56fc6ba80b7b124bb5c33bf4e45bf7f, type: 3}
+      - {fileID: 342527905328592179, guid: a33cb5a9354a05e4db5977f915c32c3d, type: 3}
+      _evolveLevel: 1
+      _evolvePrice: 0
+      evolveCounter: 0
+  - actualValue: 67
+    nextValue: 72
+    silverCost: 0
+    goldCost: 17
+    currentLevel: 0
+    costLevel: 0
+    permanentLevel: 5
+    evolveData:
+      _evolveObjects:
+      - {fileID: 6869433153810825335, guid: 4bd04e60452b5b74ca409c8633d0ba53, type: 3}
+      - {fileID: 5569992274756208873, guid: c56fc6ba80b7b124bb5c33bf4e45bf7f, type: 3}
+      - {fileID: 342527905328592179, guid: a33cb5a9354a05e4db5977f915c32c3d, type: 3}
+      _evolveLevel: 1
       _evolvePrice: 0
       evolveCounter: 0

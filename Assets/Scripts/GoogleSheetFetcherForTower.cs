@@ -6,8 +6,6 @@ using UnityEngine.UI;
 
 public class GoogleSheetFetcherForPlayer : MonoBehaviour
 {
-    public int counter = 0;
-    
     public string publishedSheetURL; // Published Google Sheet URL (CSV format)
     public GoogleDataSheetForStats googleDatasheet;    // ScriptableObject to store data
     public Button resetStatsButton;  // Reference to the UI Button
@@ -120,6 +118,7 @@ public class GoogleSheetFetcherForPlayer : MonoBehaviour
                 
                 if (float.TryParse(columns[3].Trim(), out float firstFence))
                 {
+                    Debug.Log(3333);
                     googleDatasheet.sheetValues.Add(new SheetValues());
                     googleDatasheet.sheetValues[1].values.Add(firstFence);
                     Debug.Log($"Target at line {i}: {firstFence}");
