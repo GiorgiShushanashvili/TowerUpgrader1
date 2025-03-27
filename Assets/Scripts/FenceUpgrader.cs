@@ -1,40 +1,67 @@
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
+using Debug = UnityEngine.Debug;
 
 public class FenceUpgrader:MonoBehaviour
 {
+        public event Action<int> OnFenceToUpgrade;
+        public event Action<int> OnEvolveToBeDone;
+        
+        
         Camera cam;
         public LayerMask mask;
-        
+
+        [SerializeField] private GameObject upgrader;
+        [SerializeField] private GameObject evolvePanel;
         
         [SerializeField] private GameObject[] _fenceWalls;
-        [SerializeField] private GameObject[] fences;
-        
-        
-        //[SerializeField] RayCastScript rayCastScript;
         
         [SerializeField] DataForSeparate[] dataForSeparate;
         [SerializeField] GoogleDataSheetForStats towerDataSheet;
 
-        [SerializeField] Button[] upgradeButtons;
-        [SerializeField] Button[] evolveButtons;
+        [SerializeField] Button upgradeButtons;
+        [SerializeField] Button evolveButtons;
 
+        
+        private GameObject targetObject;
         private int previosuIndexForUpgrade=0;
+        public List<bool> _allowForNextUpgrades=new();
+
+
+        private int buttonIndex;
+        private Vector3 worldPos;
+        private Vector3 screenPos;
+        
         private void Start()
         {
+                upgrader.SetActive(false);
+                evolvePanel.SetActive(false);
                 cam = Camera.main;
                 
                 SetInitialSTats();
-                for (int i = 0; i < upgradeButtons.Length; i++)
+                upgradeButtons.onClick.AddListener(()=>UpgradePanelStats(buttonIndex));
+                evolveButtons.onClick.AddListener(()=>Evolve(buttonIndex));
+
+                for (int i = 0; i < _fenceWalls.Length; i++)
                 {
-                        int index = i;
-                        //fenceButton[index].onClick.AddListener(() =>ChooseFence(index));
-                        upgradeButtons[i].onClick.AddListener(()=>UpgradePanelStats(index));
+                        _allowForNextUpgrades.Add(new bool());
+                        _allowForNextUpgrades[i] = true;
                 }
         }
 
+        private void OnEnable()
+        {
+                OnEvolveToBeDone += ConvertToEvolve;
+        }
+
+        private void OnDisable()
+        {
+                OnEvolveToBeDone-= ConvertToEvolve;
+        }
 
         private void Update()
         {
@@ -44,10 +71,21 @@ public class FenceUpgrader:MonoBehaviour
                 }
         }
 
+        #region Upgrade
         private void UpgradePanelStats(int index)
         {
-                dataForSeparate[index].permanentLevel++;
-                SetStats(index,dataForSeparate[index].permanentLevel);
+                if (_allowForNextUpgrades[index])
+                {
+                        OnFenceToUpgrade?.Invoke(index);
+                        dataForSeparate[index].permanentLevel++;
+                        SetStats(index, dataForSeparate[index].permanentLevel);
+                        dataForSeparate[index].evolveData.evolveCounter++;
+                        if (dataForSeparate[index].evolveData.evolveCounter == 5)
+                        {
+                                _allowForNextUpgrades[index] = false;
+                                OnEvolveToBeDone?.Invoke(index);
+                        }
+                }
         }
         
 
@@ -73,55 +111,83 @@ public class FenceUpgrader:MonoBehaviour
                         dataForSeparate[index].goldCost = float.PositiveInfinity;
                 }
         }
+        #endregion
 
+        #region Evolve
+
+        public void ConvertToEvolve(int index)
+        {
+                if (!_allowForNextUpgrades[index])
+                {
+                        upgrader.SetActive(false);
+                        evolvePanel.SetActive(true);
+                        evolvePanel.transform.position = screenPos;
+                }
+        }
+
+        public void Evolve(int index)
+        {
+                dataForSeparate[index].evolveData._evolveLevel++;
+                dataForSeparate[index].evolveData.evolveCounter = 0;
+                upgrader.SetActive(true);
+                upgrader.transform.position = screenPos;
+                evolvePanel.SetActive(false);
+                _allowForNextUpgrades[index] = true;
+        }
+
+        #endregion
         
+        #region Raycast
         public void ChooseFence()
         {
-                 var targetObject =Detector();
+                Detector();
+                for (int i = 0; i < _fenceWalls.Length; i++)
+                {
+                        if (targetObject != null&&targetObject.CompareTag(_fenceWalls[i].tag))
+                        {
+                                buttonIndex = i;
+                                worldPos=_fenceWalls[i].transform.position + new Vector3(0, 0.7f, 0);
+                                screenPos = cam.WorldToScreenPoint(worldPos);
 
-                 for (int i = 0; i < _fenceWalls.Length; i++)
-                 {
-                         if(targetObject.CompareTag(_fenceWalls[i].tag))
-                         {
-                                 fences[previosuIndexForUpgrade].gameObject.SetActive(false);
-                                 previosuIndexForUpgrade = i;
-                                 fences[previosuIndexForUpgrade].gameObject.SetActive(true); 
-                         }
-                         /*if (targetObject.tag == _fenceWalls[i].tag)
-                         {
-                                 fences[previosuIndexForUpgrade].gameObject.SetActive(false);
-                                 previosuIndexForUpgrade = i;
-                                 fences[previosuIndexForUpgrade].gameObject.SetActive(true); 
-                         }*/
-                 }
+                                switch (_allowForNextUpgrades[i])
+                                {
+                                        case true:
+                                                OnFenceToUpgrade?.Invoke(i); // სტარტში რომ ჩაიწეროს უი ელემენტებში სტატები
+                                                evolvePanel.SetActive(false);
+                                                upgrader.SetActive(true);
+                                                upgrader.transform.position = screenPos;
+                                                break;
+                                        case false:
+                                                upgrader.SetActive(false);
+                                                evolvePanel.transform.position = screenPos;
+                                                evolvePanel.SetActive(true);
+                                                break;
+                                }
+                        }
+                }
         }
         
-        public GameObject Detector()
+        public void Detector()
         {
-                GameObject gg = new GameObject();
-        
                 Vector3 mousPos = Input.mousePosition;
                 mousPos.x = Mathf.Clamp(mousPos.x, 0, Screen.width);
                 mousPos.y = Mathf.Clamp(mousPos.y, 0, Screen.height);
                 mousPos.z = 100f;
                 mousPos= cam.ScreenToWorldPoint(mousPos);
-                Debug.DrawRay(transform.position,mousPos-transform.position,Color.red);
+                Debug.DrawRay(transform.position,mousPos-transform.position,Color.red,0.5f);
 
                 Ray ray = cam.ScreenPointToRay(Input.mousePosition);
                 RaycastHit hit;
                 if (Physics.Raycast(ray, out hit, 100, mask))
                 {
-                        gg= hit.collider.gameObject; 
+                        targetObject= hit.collider.gameObject;
                 }
-                /*if (Input.GetMouseButtonDown(0))
+                else
                 {
-                        Ray ray = cam.ScreenPointToRay(Input.mousePosition);
-                        RaycastHit hit;
-                        if (Physics.Raycast(ray, out hit, 100, mask))
-                        {
-                                gg= hit.collider.gameObject; 
-                        }
-                }*/
-                return gg;
+                        targetObject= null;
+                        evolvePanel.SetActive(false);
+                        upgrader.SetActive(false);
+                }
         }
+        #endregion
 }

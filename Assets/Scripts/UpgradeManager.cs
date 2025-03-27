@@ -16,6 +16,8 @@ public class UpgradeManager:MonoBehaviour
     [SerializeField] private Coin goldCoins;
 
 
+    private bool _allowForNextUpgrade = false;
+
     private GameObject created;
     private void Awake()
     {
@@ -66,6 +68,7 @@ public class UpgradeManager:MonoBehaviour
             Debug.Log(999);
             if (towerPanel.panels[index].evolveData.evolveCounter == 5)
             {
+                _allowForNextUpgrade = true;
                 UpgradeStatsPanelStats(index);
             }
             else
@@ -83,6 +86,7 @@ public class UpgradeManager:MonoBehaviour
     {
         /*if (towerPanel.panels[index].goldCost <= goldCoins.coinAmount && towerPanel.panels[index].permanentLevel + 1 <
             towerStats.sheetValues[index].values.Count)*/
+        if(_allowForNextUpgrade)
         {
             
             _evolvePanel[index].gameObject.SetActive(true);
@@ -96,6 +100,7 @@ public class UpgradeManager:MonoBehaviour
             //tower=towerPanel.panels[index].evolveData._evolveObjects[towerPanel.panels[index].evolveData._evolveLevel];
             //towerPanel.panels[index].evolveData._evolveObjects[towerPanel.panels[index].evolveData._evolveLevel];
             towerPanel.panels[index].evolveData.evolveCounter = 0;
+            _allowForNextUpgrade = false;
         }
     }
 }
