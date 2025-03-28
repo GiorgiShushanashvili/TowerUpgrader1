@@ -28,6 +28,6 @@ public class EvolveData
 {
     public List<GameObject> _evolveObjects;
     public int _evolveLevel;
-    public float _evolvePrice;
+    public List<float> _evolvePrices;
     public int evolveCounter;
 }

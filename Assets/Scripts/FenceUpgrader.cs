@@ -22,6 +22,7 @@ public class FenceUpgrader:MonoBehaviour
         
         [SerializeField] DataForSeparate[] dataForSeparate;
         [SerializeField] GoogleDataSheetForStats towerDataSheet;
+        [SerializeField] private Coin goldCoins;
 
         [SerializeField] Button upgradeButtons;
         [SerializeField] Button evolveButtons;
@@ -29,7 +30,7 @@ public class FenceUpgrader:MonoBehaviour
         
         private GameObject targetObject;
         private int previosuIndexForUpgrade=0;
-        public List<bool> _allowForNextUpgrades=new();
+        //public bool[] _allowForNextUpgrades=new bool[dataForSeparate.Length];
 
 
         private int buttonIndex;
@@ -45,12 +46,6 @@ public class FenceUpgrader:MonoBehaviour
                 SetInitialSTats();
                 upgradeButtons.onClick.AddListener(()=>UpgradePanelStats(buttonIndex));
                 evolveButtons.onClick.AddListener(()=>Evolve(buttonIndex));
-
-                for (int i = 0; i < _fenceWalls.Length; i++)
-                {
-                        _allowForNextUpgrades.Add(new bool());
-                        _allowForNextUpgrades[i] = true;
-                }
         }
 
         private void OnEnable()
@@ -74,15 +69,16 @@ public class FenceUpgrader:MonoBehaviour
         #region Upgrade
         private void UpgradePanelStats(int index)
         {
-                if (_allowForNextUpgrades[index])
+                if (dataForSeparate[index]._allowForUpgrade&&dataForSeparate[index].silverCost<=goldCoins.coinAmount)
                 {
-                        OnFenceToUpgrade?.Invoke(index);
                         dataForSeparate[index].permanentLevel++;
                         SetStats(index, dataForSeparate[index].permanentLevel);
+                        goldCoins.ReduceCoins(dataForSeparate[index].goldCost);
+                        OnFenceToUpgrade?.Invoke(index);
                         dataForSeparate[index].evolveData.evolveCounter++;
                         if (dataForSeparate[index].evolveData.evolveCounter == 5)
                         {
-                                _allowForNextUpgrades[index] = false;
+                                dataForSeparate[index]._allowForUpgrade = false;
                                 OnEvolveToBeDone?.Invoke(index);
                         }
                 }
@@ -117,7 +113,7 @@ public class FenceUpgrader:MonoBehaviour
 
         public void ConvertToEvolve(int index)
         {
-                if (!_allowForNextUpgrades[index])
+                if (!dataForSeparate[index]._allowForUpgrade)
                 {
                         upgrader.SetActive(false);
                         evolvePanel.SetActive(true);
@@ -127,12 +123,15 @@ public class FenceUpgrader:MonoBehaviour
 
         public void Evolve(int index)
         {
-                dataForSeparate[index].evolveData._evolveLevel++;
-                dataForSeparate[index].evolveData.evolveCounter = 0;
-                upgrader.SetActive(true);
-                upgrader.transform.position = screenPos;
-                evolvePanel.SetActive(false);
-                _allowForNextUpgrades[index] = true;
+                if (dataForSeparate[index].evolveData._evolvePrices[0] <= goldCoins.coinAmount)
+                {
+                        dataForSeparate[index].evolveData._evolveLevel++;
+                        dataForSeparate[index].evolveData.evolveCounter = 0;
+                        upgrader.SetActive(true);
+                        upgrader.transform.position = screenPos;
+                        evolvePanel.SetActive(false);
+                        dataForSeparate[index]._allowForUpgrade = true;
+                }
         }
 
         #endregion
@@ -148,16 +147,18 @@ public class FenceUpgrader:MonoBehaviour
                                 buttonIndex = i;
                                 worldPos=_fenceWalls[i].transform.position + new Vector3(0, 0.7f, 0);
                                 screenPos = cam.WorldToScreenPoint(worldPos);
-
-                                switch (_allowForNextUpgrades[i])
+                                
+                                OnFenceToUpgrade?.Invoke(i); // სტარტში რომ ჩაიწეროს უი ელემენტებში სტატები
+                                switch (dataForSeparate[i]._allowForUpgrade)
                                 {
                                         case true:
-                                                OnFenceToUpgrade?.Invoke(i); // სტარტში რომ ჩაიწეროს უი ელემენტებში სტატები
+                                                Debug.Log(333);
                                                 evolvePanel.SetActive(false);
                                                 upgrader.SetActive(true);
                                                 upgrader.transform.position = screenPos;
                                                 break;
                                         case false:
+                                                Debug.Log(333);
                                                 upgrader.SetActive(false);
                                                 evolvePanel.transform.position = screenPos;
                                                 evolvePanel.SetActive(true);
@@ -175,7 +176,7 @@ public class FenceUpgrader:MonoBehaviour
                 mousPos.z = 100f;
                 mousPos= cam.ScreenToWorldPoint(mousPos);
                 Debug.DrawRay(transform.position,mousPos-transform.position,Color.red,0.5f);
-
+                
                 Ray ray = cam.ScreenPointToRay(Input.mousePosition);
                 RaycastHit hit;
                 if (Physics.Raycast(ray, out hit, 100, mask))
