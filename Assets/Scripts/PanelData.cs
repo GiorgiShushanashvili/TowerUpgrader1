@@ -26,8 +26,11 @@ public class PanelDataForOne
 [System.Serializable]
 public class EvolveData
 {
+    public bool _isEvolved=false;
+    
     public List<GameObject> _evolveObjects;
     public int _evolveLevel;
     public List<float> _evolvePrices;
+    public List<float> _evolveDuration;
     public int evolveCounter;
 }
