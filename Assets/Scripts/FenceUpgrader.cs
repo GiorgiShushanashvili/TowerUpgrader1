@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.PlayerLoop;
 using UnityEngine.UI;
@@ -12,8 +13,7 @@ public class FenceUpgrader:MonoBehaviour
         public event Action<EvolveInvokeData> OnEvolveSTart;
         public event Action<int> OnFenceToUpgrade;
         public event Action<int> OnEvolveToBeDone;
-
-       // private Timer timer = new Timer();
+        
         [SerializeField] public Wall[] timers;
         
         Camera cam;
@@ -24,6 +24,8 @@ public class FenceUpgrader:MonoBehaviour
         
         [SerializeField] private GameObject[] _fenceWalls;
         
+        [SerializeField] TimerData timerData;
+        
         [SerializeField] DataForSeparate[] dataForSeparate;
         [SerializeField] GoogleDataSheetForStats towerDataSheet;
         [SerializeField] private Coin goldCoins;
@@ -32,9 +34,12 @@ public class FenceUpgrader:MonoBehaviour
         [SerializeField] Button evolveButtons;
 
         
+        private DateTime quitTime;
+        
+        private int TimeDuringQuit;
+        private int elapsedTime;
+        
         private GameObject targetObject;
-        //private int previosuIndexForUpgrade=0;
-        //public bool[] _allowForNextUpgrades=new bool[dataForSeparate.Length];
 
 
         private int buttonIndex;
@@ -43,11 +48,25 @@ public class FenceUpgrader:MonoBehaviour
         
         private void Start()
         {
-                /*for (int i = 0; i < dataForSeparate.Length; i++)
+                /*if (quitTime != null)
                 {
-                        if(dataForSeparate[i] != null)
+                        TimeDuringQuit = DateTime.UtcNow.Subtract(quitTime).Seconds;
+                        for (int i = 0; i < timerData.timerData.Count; i++)
+                        {
+                                timerData.timerData[i].duration = timerData.timerData[i].duration-(quitTime-DateTime.Parse(timerData.timerData[i]._startDate)).Seconds -  TimeDuringQuit;
+                                Debug.Log(timerData.timerData[i].duration);
+                                if (timerData.timerData[i].duration <= 0)
+                                {
+                                        timerData.timerData.RemoveAt(i);
+                                }
+                        }
                 }*/
-                
+                for (int i = 0; i < timerData.timerData.Count; i++)
+                {
+                        //Debug.Log(timerData.timerData[i].duration);
+                        timers[timerData.timerData[i].index].StartTimer(timerData.timerData[i].duration);
+                }
+
                 upgrader.SetActive(false);
                 evolvePanel.SetActive(false);
                 cam = Camera.main;
@@ -59,20 +78,20 @@ public class FenceUpgrader:MonoBehaviour
 
         private void OnEnable()
         {
+                quitTime=DateTime.Parse(PlayerPrefs.GetString("QuitTime"));
                 OnEvolveToBeDone += ConvertToEvolve;
+                WorkTimer.Instance.OnProcessEnd += RefreshDatAFterEvolve;
         }
 
         private void OnDisable()
         {
                 OnEvolveToBeDone-= ConvertToEvolve;
+                WorkTimer.Instance.OnProcessEnd -= RefreshDatAFterEvolve;
+                PlayerPrefs.SetString("QuitTime",DateTime.UtcNow.ToString());
         }
 
         private void Update()
         {
-                /*if (WorkTimer.Instance.evolved)
-                {
-                        RefreshDatAFterEvolve(0);
-                }*/
                 if (Input.GetMouseButtonDown(0))
                 {
                         ChooseFence();
@@ -139,20 +158,9 @@ public class FenceUpgrader:MonoBehaviour
         {
                 if (dataForSeparate[index].evolveData._evolvePrices[dataForSeparate[index].evolveData._evolveLevel] <= goldCoins.coinAmount)
                 {
-                        OnEvolveSTart?.Invoke(new EvolveInvokeData()
-                        {
-                                index = index,
-                                duration = Convert.ToInt32(dataForSeparate[index].evolveData._evolveDuration[dataForSeparate[index].evolveData._evolveLevel])
-                        });
-                        //timers[index].StartActualTimer();
-                        timers[index].StartTimer(Convert.ToInt32(dataForSeparate[index].evolveData._evolveDuration[dataForSeparate[index].evolveData._evolveLevel]));
-                        WorkTimer.Instance.AddNewProcess(Convert.ToInt32(dataForSeparate[index].evolveData._evolveDuration[dataForSeparate[index].evolveData._evolveLevel]));
-
-                        /*if (WorkTimer.Instance.evolved)
-                        {
-                                RefreshDatAFterEvolve(index);
-                        }*/
-                        WorkTimer.Instance.OnProcessEnd += RefreshDatAFterEvolve;
+                        timers[index].StartTimer(Convert.ToInt32(dataForSeparate[index].evolveData._evolveDuration[dataForSeparate[index].evolveData._evolveLevel])*60);
+                        dataForSeparate[index].evolveData.isBeingEvolved = true;
+                        WorkTimer.Instance.AddNewProcess(Convert.ToInt32(dataForSeparate[index].evolveData._evolveDuration[dataForSeparate[index].evolveData._evolveLevel])*60,index);
                 }
         }
 
@@ -163,9 +171,9 @@ public class FenceUpgrader:MonoBehaviour
                 upgrader.SetActive(true);
                 upgrader.transform.position = screenPos;
                 evolvePanel.SetActive(false);
+                
                 dataForSeparate[index]._allowForUpgrade = true;
-                //dataForSeparate[index].evolveData._isEvolved = false;
-                WorkTimer.Instance.evolved = false;
+                //WorkTimer.Instance.evolved = false;
         }
 
         #endregion

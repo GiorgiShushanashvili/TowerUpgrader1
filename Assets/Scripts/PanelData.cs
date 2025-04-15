@@ -26,7 +26,7 @@ public class PanelDataForOne
 [System.Serializable]
 public class EvolveData
 {
-    public bool _isEvolved=false;
+    public bool isBeingEvolved=false;
     
     public List<GameObject> _evolveObjects;
     public int _evolveLevel;
