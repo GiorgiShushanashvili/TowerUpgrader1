@@ -32,7 +32,6 @@ public class UpgradeManager:MonoBehaviour
         {
             int index = i;
             _upgradeButtons[i].onClick.AddListener(()=>UpgradePanelStats(index));
-            //_upgradeButtons[i].onClick.AddListener(()=>); = false;
         }
     }
 

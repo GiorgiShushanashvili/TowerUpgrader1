@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b5548a2481bb4db9861e39a55d3c3399, type: 3}
   m_Name: GoldCoins
   m_EditorClassIdentifier: 
-  coinAmount: 1e+22
+  coinAmount: 99924

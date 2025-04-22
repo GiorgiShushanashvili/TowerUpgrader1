@@ -1,25 +1,21 @@
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using Unity.VisualScripting;
+using System.Data.Common;
 using UnityEngine;
-using UnityEngine.PlayerLoop;
+
 using UnityEngine.UI;
 using Debug = UnityEngine.Debug;
 
 public class FenceUpgrader:MonoBehaviour
 {
-        public event Action<EvolveInvokeData> OnEvolveSTart;
         public event Action<int> OnFenceToUpgrade;
         public event Action<int> OnEvolveToBeDone;
         
-        [SerializeField] public Wall[] timers;
+        [SerializeField] public Timer[] timers;
         
         Camera cam;
         public LayerMask mask;
 
-        [SerializeField] private GameObject upgrader;
+        [SerializeField] private GameObject upgradePanel;
         [SerializeField] private GameObject evolvePanel;
         
         [SerializeField] private GameObject[] _fenceWalls;
@@ -36,9 +32,6 @@ public class FenceUpgrader:MonoBehaviour
         
         private DateTime quitTime;
         
-        private int TimeDuringQuit;
-        private int elapsedTime;
-        
         private GameObject targetObject;
 
 
@@ -48,26 +41,24 @@ public class FenceUpgrader:MonoBehaviour
         
         private void Start()
         {
-                /*if (quitTime != null)
+                for (int i = 0; i < dataForSeparate.Length; i++)
                 {
-                        TimeDuringQuit = DateTime.UtcNow.Subtract(quitTime).Seconds;
-                        for (int i = 0; i < timerData.timerData.Count; i++)
+                        if (!dataForSeparate[i].evolveData.isBeingEVolved&&!dataForSeparate[i]._allowForUpgrade)
                         {
-                                timerData.timerData[i].duration = timerData.timerData[i].duration-(quitTime-DateTime.Parse(timerData.timerData[i]._startDate)).Seconds -  TimeDuringQuit;
-                                Debug.Log(timerData.timerData[i].duration);
-                                if (timerData.timerData[i].duration <= 0)
-                                {
-                                        timerData.timerData.RemoveAt(i);
-                                }
+                                timers[i].current = dataForSeparate[i].evolveData
+                                        ._evolveDuration[dataForSeparate[i].evolveData._evolveLevel].ToString();
                         }
-                }*/
-                for (int i = 0; i < timerData.timerData.Count; i++)
+                }
+                
+                for(int i = 0; i < timerData.timerData.Count; i++)
                 {
-                        //Debug.Log(timerData.timerData[i].duration);
                         timers[timerData.timerData[i].index].StartTimer(timerData.timerData[i].duration);
                 }
 
-                upgrader.SetActive(false);
+
+                StartCoroutine(TimerManager.Instance.UpdateToForUi()); // ვიზუსლაური დრო
+                
+                upgradePanel.SetActive(false);
                 evolvePanel.SetActive(false);
                 cam = Camera.main;
                 
@@ -147,7 +138,7 @@ public class FenceUpgrader:MonoBehaviour
         {
                 if (!dataForSeparate[index]._allowForUpgrade)
                 {
-                        upgrader.SetActive(false);
+                        upgradePanel.SetActive(false);
                         evolvePanel.SetActive(true);
                         evolvePanel.transform.position = screenPos;
                 }
@@ -156,10 +147,11 @@ public class FenceUpgrader:MonoBehaviour
         
         public void Evolve(int index)
         {
-                if (dataForSeparate[index].evolveData._evolvePrices[dataForSeparate[index].evolveData._evolveLevel] <= goldCoins.coinAmount)
+                if (dataForSeparate[index].evolveData._evolvePrices[dataForSeparate[index].evolveData._evolveLevel] <= goldCoins.coinAmount&&!dataForSeparate[index].evolveData.isBeingEVolved)
                 {
+                        StartCoroutine(TimerManager.Instance.UpdateToForUi());
                         timers[index].StartTimer(Convert.ToInt32(dataForSeparate[index].evolveData._evolveDuration[dataForSeparate[index].evolveData._evolveLevel])*60);
-                        dataForSeparate[index].evolveData.isBeingEvolved = true;
+                        dataForSeparate[index].evolveData.isBeingEVolved = true;
                         WorkTimer.Instance.AddNewProcess(Convert.ToInt32(dataForSeparate[index].evolveData._evolveDuration[dataForSeparate[index].evolveData._evolveLevel])*60,index);
                 }
         }
@@ -168,12 +160,12 @@ public class FenceUpgrader:MonoBehaviour
         {
                 dataForSeparate[index].evolveData._evolveLevel++;
                 dataForSeparate[index].evolveData.evolveCounter = 0;
-                upgrader.SetActive(true);
-                upgrader.transform.position = screenPos;
+                upgradePanel.SetActive(true);
+                upgradePanel.transform.position = screenPos;
                 evolvePanel.SetActive(false);
                 
                 dataForSeparate[index]._allowForUpgrade = true;
-                //WorkTimer.Instance.evolved = false;
+                dataForSeparate[index].evolveData.isBeingEVolved = false;
         }
 
         #endregion
@@ -186,10 +178,6 @@ public class FenceUpgrader:MonoBehaviour
                 {
                         if (targetObject != null&&targetObject.CompareTag(_fenceWalls[i].tag))
                         {
-                                //timer.StartActualTimer();
-                                
-                                //timer.StartTimer(dataForSeparate[i].evolveData._evolveDuration[dataForSeparate[i].evolveData._evolveLevel]);
-                                
                                 buttonIndex = i;
                                 worldPos=_fenceWalls[i].transform.position + new Vector3(0, 0.7f, 0);
                                 screenPos = cam.WorldToScreenPoint(worldPos);
@@ -199,11 +187,11 @@ public class FenceUpgrader:MonoBehaviour
                                 {
                                         case true:
                                                 evolvePanel.SetActive(false);
-                                                upgrader.SetActive(true);
-                                                upgrader.transform.position = screenPos;
+                                                upgradePanel.SetActive(true);
+                                                upgradePanel.transform.position = screenPos;
                                                 break;
                                         case false:
-                                                upgrader.SetActive(false);
+                                                upgradePanel.SetActive(false);
                                                 evolvePanel.transform.position = screenPos;
                                                 evolvePanel.SetActive(true);
                                                 break;
@@ -231,7 +219,7 @@ public class FenceUpgrader:MonoBehaviour
                 {
                         targetObject= null;
                         evolvePanel.SetActive(false);
-                        upgrader.SetActive(false);
+                        upgradePanel.SetActive(false);
                 }
         }
         #endregion

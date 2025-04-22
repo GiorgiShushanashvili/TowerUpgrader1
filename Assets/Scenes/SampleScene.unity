@@ -1260,13 +1260,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 270577873}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 3.28, y: -7.9488792, z: 0.022319794}
+  m_LocalRotation: {x: 0, y: -0.7132504, z: 0, w: 0.7009094}
+  m_LocalPosition: {x: 0.35, y: -7.9488792, z: -5.37}
   m_LocalScale: {x: 0.1, y: 1, z: 7}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 988342862}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: -91, z: 0}
 --- !u!65 &270577875
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1350,7 +1350,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d29e93d4b5d514459712d95a41347b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  current: 
+  currentTimeLeft: {fileID: 118990234}
   evolved: 0
 --- !u!1 &301512500
 GameObject:
@@ -2351,7 +2351,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d29e93d4b5d514459712d95a41347b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  current: 
+  currentTimeLeft: {fileID: 118990234}
   evolved: 0
 --- !u!1 &608398009
 GameObject:
@@ -2670,13 +2670,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 794529445}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -3.83, y: -7.9488792, z: 0.022319794}
+  m_LocalRotation: {x: 0, y: 0.5378147, z: 0, w: 0.8430631}
+  m_LocalPosition: {x: 3.25, y: -7.9488792, z: -0.03}
   m_LocalScale: {x: 0.1, y: 1, z: 6.8}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 988342862}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 65.07, z: 0}
 --- !u!65 &794529447
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2760,7 +2760,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d29e93d4b5d514459712d95a41347b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  current: 
+  currentTimeLeft: {fileID: 118990234}
   evolved: 0
 --- !u!1 &818141602
 GameObject:
@@ -3059,7 +3059,7 @@ MonoBehaviour:
   mask:
     serializedVersion: 2
     m_Bits: 64
-  upgrader: {fileID: 159870229}
+  upgradePanel: {fileID: 159870229}
   evolvePanel: {fileID: 513349360}
   _fenceWalls:
   - {fileID: 1334216643}
@@ -4071,7 +4071,7 @@ Transform:
   m_GameObject: {fileID: 1334216643}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.24955407, y: -7.9488792, z: -3.68}
+  m_LocalPosition: {x: -0.24955407, y: -7.9488792, z: -3.74}
   m_LocalScale: {x: 6.8, y: 1, z: 0.1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4160,7 +4160,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d29e93d4b5d514459712d95a41347b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  current: 
+  currentTimeLeft: {fileID: 118990234}
   evolved: 0
 --- !u!1 &1357330486
 GameObject:
