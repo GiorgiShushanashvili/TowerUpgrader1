@@ -717,6 +717,7 @@ GameObject:
   - component: {fileID: 167192341}
   - component: {fileID: 167192343}
   - component: {fileID: 167192344}
+  - component: {fileID: 167192345}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -761,7 +762,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 167192340}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8b9b2ec547d14acebd5369581e3d625e, type: 3}
   m_Name: 
@@ -797,6 +798,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe07d5da105d47448bc7da798e9e7f34, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  timerData: {fileID: 11400000, guid: 9d13001957406b749a0f12b20b01a562, type: 2}
+  fenceUpgrader: {fileID: 988342863}
+--- !u!114 &167192345
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 167192340}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cc1481eddece40c98f472528f42816f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _evolveTime: {fileID: 118990234}
+  timers:
+  - {fileID: 1334216648}
+  - {fileID: 522503138}
+  - {fileID: 794529450}
+  - {fileID: 270577878}
   timerData: {fileID: 11400000, guid: 9d13001957406b749a0f12b20b01a562, type: 2}
   fenceUpgrader: {fileID: 988342863}
 --- !u!1 &205975307
@@ -1226,12 +1247,6 @@ MonoBehaviour:
   nextStat: {fileID: 925182681}
   _upgradeCost: {fileID: 99682887}
   _evolveCost: {fileID: 211133133}
-  timers:
-  - {fileID: 1334216648}
-  - {fileID: 522503138}
-  - {fileID: 794529450}
-  - {fileID: 270577878}
-  _evolveTime: {fileID: 118990234}
 --- !u!1 &270577873
 GameObject:
   m_ObjectHideFlags: 0
@@ -1350,7 +1365,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d29e93d4b5d514459712d95a41347b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentTimeLeft: {fileID: 118990234}
+  current: 
   evolved: 0
 --- !u!1 &301512500
 GameObject:
@@ -2015,7 +2030,7 @@ PrefabInstance:
     - target: {fileID: 6980391376227629497, guid: 693a5c4bad16e0049bfb5855d8b5c74b,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8039124253415807729, guid: 693a5c4bad16e0049bfb5855d8b5c74b,
         type: 3}
@@ -2351,7 +2366,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d29e93d4b5d514459712d95a41347b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentTimeLeft: {fileID: 118990234}
+  current: 
   evolved: 0
 --- !u!1 &608398009
 GameObject:
@@ -2760,7 +2775,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d29e93d4b5d514459712d95a41347b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentTimeLeft: {fileID: 118990234}
+  current: 
   evolved: 0
 --- !u!1 &818141602
 GameObject:
@@ -3076,6 +3091,7 @@ MonoBehaviour:
   goldCoins: {fileID: 11400000, guid: 8b3fec5e79b42b84a94845c3e39ea221, type: 2}
   upgradeButtons: {fileID: 1232942859}
   evolveButtons: {fileID: 2047329608}
+  _walls: []
 --- !u!1 &1002451968
 GameObject:
   m_ObjectHideFlags: 0
@@ -4160,7 +4176,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d29e93d4b5d514459712d95a41347b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentTimeLeft: {fileID: 118990234}
+  current: 
   evolved: 0
 --- !u!1 &1357330486
 GameObject:
@@ -5790,6 +5806,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1357330487}
     m_Modifications:
+    - target: {fileID: 1071333348835568560, guid: a7257a66c1ffeeb41b6f9bb8c680a8b1,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1175394630529642744, guid: a7257a66c1ffeeb41b6f9bb8c680a8b1,
         type: 3}
       propertyPath: m_text
@@ -5844,6 +5865,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_HorizontalAlignment
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2459553646394548796, guid: a7257a66c1ffeeb41b6f9bb8c680a8b1,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2789361198584510371, guid: a7257a66c1ffeeb41b6f9bb8c680a8b1,
         type: 3}
@@ -6091,7 +6117,7 @@ PrefabInstance:
     - target: {fileID: 6869433153810825335, guid: 4bd04e60452b5b74ca409c8633d0ba53,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

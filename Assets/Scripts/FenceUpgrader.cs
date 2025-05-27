@@ -29,6 +29,8 @@ public class FenceUpgrader:MonoBehaviour
         [SerializeField] Button upgradeButtons;
         [SerializeField] Button evolveButtons;
 
+
+        [SerializeField] private MeshRenderer[] _walls;
         
         private DateTime quitTime;
         
@@ -163,6 +165,14 @@ public class FenceUpgrader:MonoBehaviour
                 upgradePanel.SetActive(true);
                 upgradePanel.transform.position = screenPos;
                 evolvePanel.SetActive(false);
+                
+                var posToGive=_fenceWalls[index].transform.position;
+                _fenceWalls[index].SetActive(false);
+
+                Instantiate(dataForSeparate[index].evolveData._evolveObjects[dataForSeparate[index].evolveData._evolveLevel]
+                                ,posToGive,Quaternion.identity);
+                dataForSeparate[index].evolveData._evolveObjects[dataForSeparate[index].evolveData._evolveLevel].SetActive(true);
+                
                 
                 dataForSeparate[index]._allowForUpgrade = true;
                 dataForSeparate[index].evolveData.isBeingEVolved = false;
